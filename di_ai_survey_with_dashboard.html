@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DI Team — Agentic AI Readiness Survey</title>
+<style>
+/* ── Reset & Base ── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f3f5f9;
+  --surface:#ffffff;
+  --border:#e6e8ee;
+  --border-light:#eef0f5;
+  --text-primary:#18181A;
+  --text-secondary:#6B6A63;
+  --text-muted:#A8A7A0;
+  --accent:#5046E4;
+  --accent-light:#EEEDFE;
+  --accent-border:#AFA9EC;
+  --green:#22A06B;
+  --green-light:#E3FCEF;
+  --green-border:#7EE2B8;
+  --radius-sm:6px;
+  --radius:10px;
+  --radius-lg:14px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06);
+  --shadow:0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg:0 8px 24px rgba(0,0,0,0.10);
+}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh;padding:0}
+a{text-decoration:none;color:inherit}
+
+/* ── Page Shell ── */
+.page-header{background:rgba(24,24,26,0.92);backdrop-filter:blur(10px);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08)}
+.ph-brand{display:flex;align-items:center;gap:10px}
+.ph-logo{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.ph-logo svg{width:16px;height:16px;fill:white}
+.ph-name{font-size:13px;font-weight:600;color:#fff;letter-spacing:0.01em}
+.ph-sub{font-size:11px;color:rgba(255,255,255,0.45);margin-top:1px}
+.admin-link{font-size:12px;color:rgba(255,255,255,0.6);padding:5px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;transition:all 0.15s;display:flex;align-items:center;gap:5px}
+.admin-link:hover{color:#fff;border-color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.08)}
+.admin-link svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ── Wrapper ── */
+.wrapper{max-width:920px;margin:0 auto;padding:2rem 1rem 4rem}
+
+/* ── Survey Hero ── */
+.survey-hero{text-align:center;padding:2.5rem 1.5rem 2rem;margin-bottom:1.5rem}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:var(--accent);background:var(--accent-light);border:1px solid var(--accent-border);border-radius:20px;padding:4px 12px;margin-bottom:1rem;letter-spacing:0.03em}
+.hero-badge svg{width:12px;height:12px;fill:var(--accent)}
+.survey-hero h1{font-size:24px;font-weight:600;color:var(--text-primary);margin-bottom:8px;line-height:1.3}
+.survey-hero p{font-size:13px;color:var(--text-secondary);line-height:1.7;max-width:520px;margin:0 auto}
+
+/* ── Section Card ── */
+.section-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);padding:1.5rem;margin-bottom:1.25rem;box-shadow:var(--shadow-sm)}
+.section-head{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--border-light)}
+.section-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-icon svg{width:18px;height:18px;stroke:var(--text-primary);fill:none;stroke-width:2}
+.si-person{background:#FFF3E0}.si-skill{background:var(--accent-light)}.si-vibe{background:var(--green-light)}.si-tools{background:#F3E5F5}.si-interest{background:#E3F2FD}
+.section-meta h2{font-size:14px;font-weight:600;color:var(--text-primary)}
+.section-meta p{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* ── Form Elements ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-size:11px;font-weight:500;color:var(--text-secondary);letter-spacing:0.04em;text-transform:uppercase}
+input[type=text],select,textarea{
+  width:100%;font-size:13px;padding:9px 12px;
+  border-radius:var(--radius-sm);border:1px solid var(--border);
+  background:#fafaf8;color:var(--text-primary);outline:none;
+  transition:border-color 0.15s,box-shadow 0.15s;
+  font-family:inherit
+}
+input[type=text]:focus,select:focus,textarea:focus{
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 3px rgba(80,70,228,0.08);
+  background:#fff
+}
+select{cursor:pointer}
+textarea{resize:vertical;min-height:72px}
+
+/* ── Skill Legend ── */
+.skill-legend{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.sl-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary)}
+.sl-dot{width:8px;height:8px;border-radius:50%}
+
+/* ── Skill Grid ── */
+.sk-grid{display:flex;flex-direction:column;gap:6px}
+.sk-row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#fafaf8;border-radius:var(--radius);padding:10px 12px;
+  border:1px solid var(--border-light);transition:border-color 0.12s
+}
+.sk-row:hover{border-color:var(--border)}
+.sk-left{flex:1;min-width:0}
+.sk-tag{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px}
+.sk-name{font-size:13px;color:var(--text-primary);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lvl-btns{display:flex;gap:4px;flex-shrink:0;margin-left:12px}
+.lb{
+  width:32px;height:28px;border-radius:var(--radius-sm);
+  border:1px solid var(--border);background:#fff;
+  font-size:12px;font-weight:600;color:var(--text-muted);
+  cursor:pointer;transition:all 0.12s;line-height:1
+}
+.lb:hover{border-color:var(--text-muted);color:var(--text-primary)}
+.lb.a0{background:#F1EFE8;color:#5C5A52;border-color:#C8C6BE}
+.lb.a1{background:#DBEAFE;color:#1D4ED8;border-color:#93C5FD}
+.lb.a2{background:#DCFCE7;color:#15803D;border-color:#86EFAC}
+.lb.a3{background:var(--accent-light);color:var(--accent);border-color:var(--accent-border)}
+.lb.a4{background:#D1FAE5;color:#065F46;border-color:#6EE7B7}
+
+/* ── Score Bar ── */
+.score-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(135deg,#18181A 0%,#2D2D30 100%);
+  border-radius:var(--radius-lg);padding:1.25rem 1.5rem;
+  margin:1.25rem 0;color:#fff;box-shadow:var(--shadow-lg)
+}
+.score-left .sl-label{font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+.score-num{font-size:36px;font-weight:700;line-height:1;letter-spacing:-0.02em}
+.score-num span{font-size:18px;font-weight:400;opacity:0.5}
+.score-right{text-align:right}
+.score-right .sl-label{font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
+.tbadge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.03em}
+.t0{background:#F1EFE8;color:#5C5A52}.t1{background:#DBEAFE;color:#1D4ED8}
+.t2{background:#DCFCE7;color:#15803D}.t3{background:var(--accent-light);color:var(--accent)}
+.t4{background:#D1FAE5;color:#065F46}
+
+/* ── Vibe Section ── */
+.vibe-section{background:linear-gradient(135deg,#F0FFF4 0%,#ECFDF5 100%);border:1px solid var(--green-border);border-radius:var(--radius-lg);padding:1.25rem}
+.vibe-title-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.vibe-title{font-size:14px;font-weight:600;color:#065F46}
+.vibe-badge-new{font-size:10px;font-weight:500;background:var(--green-light);color:var(--green);border:1px solid var(--green-border);border-radius:12px;padding:2px 8px}
+.vibe-desc{font-size:12px;color:#166534;margin-bottom:1.25rem;line-height:1.6}
+.vq-block{margin-bottom:1rem}
+.vq-label{font-size:12px;font-weight:500;color:#166534;margin-bottom:6px;display:block}
+.radio-group{display:flex;flex-direction:column;gap:5px}
+.radio-opt{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:8px 10px;border:1px solid rgba(22,101,52,0.2);
+  border-radius:var(--radius-sm);cursor:pointer;
+  font-size:12px;color:#166534;background:rgba(255,255,255,0.7);
+  transition:all 0.12s
+}
+.radio-opt:hover{border-color:var(--green-border);background:rgba(255,255,255,0.9)}
+.radio-opt.sel{border-color:var(--green);background:#fff;box-shadow:0 0 0 3px rgba(34,160,107,0.1)}
+.radio-opt input{margin-top:1px;accent-color:var(--green);flex-shrink:0}
+
+/* ── Vibe Level Bar ── */
+.vibe-level-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
+.vl-card{
+  border:1px solid rgba(22,101,52,0.15);border-radius:var(--radius-sm);
+  padding:8px 6px;text-align:center;cursor:pointer;background:rgba(255,255,255,0.7);
+  transition:all 0.12s
+}
+.vl-card:hover{border-color:var(--green-border)}
+.vl-card.active{border-color:var(--green);background:#fff;box-shadow:0 0 0 3px rgba(34,160,107,0.12)}
+.vl-title{font-size:12px;font-weight:600;color:#166534}
+.vl-sub{font-size:10px;color:#4ADE80;margin-top:2px}
+.vl-card.active .vl-sub{color:var(--green)}
+
+/* ── Tool Checks ── */
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.tool-check{
+  display:flex;align-items:center;gap:7px;
+  font-size:12px;color:var(--text-primary);
+  padding:7px 10px;border:1px solid var(--border-light);
+  border-radius:var(--radius-sm);cursor:pointer;background:#fafaf8;
+  transition:all 0.12s
+}
+.tool-check:hover{border-color:var(--border);background:#fff}
+.tool-check input{width:14px;height:14px;accent-color:var(--accent);flex-shrink:0}
+
+/* ── Submit ── */
+.submit-section{margin-top:0.5rem;display:flex;gap:8px}
+.btn-reset{
+  padding:11px 18px;border-radius:var(--radius);
+  background:transparent;color:var(--text-secondary);
+  border:1px solid var(--border);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all 0.12s;white-space:nowrap
+}
+.btn-reset:hover{background:#f5f4f0;border-color:var(--text-muted)}
+.btn-submit{
+  flex:1;padding:12px 20px;border-radius:var(--radius);
+  background:var(--accent);color:#fff;border:none;
+  font-size:14px;font-weight:600;cursor:pointer;
+  transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px
+}
+.btn-submit:hover:not(:disabled){background:#3730C8;box-shadow:0 4px 12px rgba(80,70,228,0.35)}
+.btn-submit:disabled{opacity:0.55;cursor:not-allowed}
+.btn-submit svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+
+/* ── Toasts ── */
+.toast{
+  display:none;border-radius:var(--radius);padding:12px 14px;
+  font-size:13px;margin-top:1rem;display:none;align-items:flex-start;gap:10px;
+  animation:slideIn 0.2s ease
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.toast-ok{background:var(--green-light);color:#065F46;border:1px solid var(--green-border)}
+.toast-err{background:#FEF2F2;color:#B91C1C;border:1px solid #FECACA}
+.toast-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* ── Spinner ── */
+.spin{
+  display:inline-block;width:14px;height:14px;
+  border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;
+  border-radius:50%;animation:spin 0.6s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Responsive ── */
+@media(max-width:600px){
+  .wrapper{padding:1rem 0.75rem 3rem}
+  .form-grid{grid-template-columns:1fr}
+  .vibe-level-grid{grid-template-columns:1fr 1fr}
+  .tool-grid{grid-template-columns:1fr}
+  .lvl-btns .lb{width:28px;height:26px;font-size:11px}
+  .survey-hero h1{font-size:20px}
+  .score-num{font-size:28px}
+  .admin-link{padding:5px 10px}
+}
+</style>
+</head>
+<body>
+
+<!-- Page Header -->
+<header class="page-header">
+  <div class="ph-brand">
+    <div class="ph-logo">
+      <svg viewBox="0 0 16 16"><path d="M8 2L2 5v4c0 3 2.5 5.2 6 6 3.5-.8 6-3 6-6V5L8 2z"/></svg>
+    </div>
+    <div>
+      <div class="ph-name">DI Team · Agentic AI Survey</div>
+      <div class="ph-sub">Adasoft Co., Ltd.</div>
+    </div>
+  </div>
+  <a href="/admin" class="admin-link">
+    <svg viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    Admin Dashboard
+  </a>
+</header>
+
+<div class="wrapper">
+
+  <!-- Hero -->
+  <div class="survey-hero">
+    <div class="hero-badge">
+      <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7"/></svg>
+      Agentic AI Readiness Assessment
+    </div>
+    <h1>ประเมินความพร้อม AI ของคุณ</h1>
+    <p>ประเมินระดับทักษะ Agentic AI และ Vibe Coding รายบุคคล เพื่อวางแผนพัฒนาทีม — ข้อมูลถูกบันทึกเข้า Database อัตโนมัติ</p>
+  </div>
+
+  <!-- Section 1: ข้อมูลพื้นฐาน -->
+  <div class="section-card">
+    <div class="section-head">
+      <div class="section-icon si-person" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 10-16 0"/><path d="M12 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+      </div>
+      <div class="section-meta">
+        <h2>ข้อมูลพื้นฐาน</h2>
+        <p>ชื่อ, ตำแหน่ง, ทีม, ประสบการณ์</p>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">ปีที่ตอบ (YY) *</label>
+        <input type="text" id="f-yy" placeholder="เช่น 26">
+      </div>
+      <div class="form-group">
+        <label class="form-label">เดือนที่ตอบ (MM) *</label>
+        <input type="text" id="f-mm" placeholder="เช่น 04">
+      </div>
+      <div class="form-group">
+        <label class="form-label">ชื่อ - นามสกุล *</label>
+        <input type="text" id="f-name" placeholder="กรอกชื่อจริง">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email *</label>
+        <input type="text" id="f-email" placeholder="เช่น name@company.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">ตำแหน่ง</label>
+        <select id="f-role">
+          <option value="">-- เลือก --</option>
+          <option>SA / System Analyst</option><option>PM / Project Manager</option>
+          <option>Developer (PHP)</option><option>Developer (C#)</option>
+          <option>Developer (Android)</option><option>Tester / QA</option>
+          <option>FTH / Implementer</option><option>LEAD</option><option>อื่นๆ</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ทีม</label>
+        <select id="f-team">
+          <option value="">-- เลือก --</option>
+          <option>Android</option>
+          <option>C#</option>
+          <option>FTH</option>
+          <option>LEAD</option>
+          <option>PHP</option>
+          <option>Tester</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">ประสบการณ์</label>
+        <select id="f-exp">
+          <option value="">-- เลือก --</option>
+          <option>น้อยกว่า 1 ปี</option><option>1-3 ปี</option>
+          <option>3-5 ปี</option><option>มากกว่า 5 ปี</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Agentic AI Skills -->
+  <div class="section-card">
+    <div class="section-head">
+      <div class="section-icon si-skill" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 2v2"/><path d="M8 4h8"/><path d="M6 10a6 6 0 0112 0v6a3 3 0 01-3 3H9a3 3 0 01-3-3v-6z"/><path d="M9 14h.01"/><path d="M15 14h.01"/><path d="M10 18h4"/></svg>
+      </div>
+      <div class="section-meta">
+        <h2>ระดับทักษะ Agentic AI</h2>
+        <p>เลือกระดับ 0–4 สำหรับทักษะแต่ละด้าน</p>
+      </div>
+    </div>
+    <div class="skill-legend">
+      <div class="sl-item"><div class="sl-dot" style="background:#C8C6BE"></div>0 ไม่รู้จัก</div>
+      <div class="sl-item"><div class="sl-dot" style="background:#93C5FD"></div>1 รู้จัก</div>
+      <div class="sl-item"><div class="sl-dot" style="background:#86EFAC"></div>2 ทดลองใช้</div>
+      <div class="sl-item"><div class="sl-dot" style="background:var(--accent-border)"></div>3 ใช้ได้ดี</div>
+      <div class="sl-item"><div class="sl-dot" style="background:#6EE7B7"></div>4 เชี่ยวชาญ</div>
+    </div>
+    <div class="sk-grid" id="skill-grid"></div>
+
+    <!-- Score Display -->
+    <div class="score-bar">
+      <div class="score-left">
+        <div class="sl-label">คะแนน Agentic AI</div>
+        <div class="score-num" id="total-score">0 <span>/ 40</span></div>
+      </div>
+      <div class="score-right">
+        <div class="sl-label">ระดับ</div>
+        <div id="total-tier">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Vibe Coding -->
+  <div class="section-card">
+    <div class="section-head">
+      <div class="section-icon si-vibe" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 12-14h-7l-1-6z"/></svg>
+      </div>
+      <div class="section-meta">
+        <h2>Vibe Coding Assessment</h2>
+        <p>กลุ่มที่ต่อยอดสู่ Agentic AI ได้เร็วที่สุด</p>
+      </div>
+    </div>
+    <div class="vibe-section">
+      <div class="vibe-title-row">
+        <div class="vibe-title">Vibe Coding</div>
+        <div class="vibe-badge-new">High-potential Track</div>
+      </div>
+      <div class="vibe-desc">เขียนโค้ดโดยใช้ AI เป็นหลัก — อธิบายสิ่งที่ต้องการแล้วให้ AI สร้างโค้ดให้ กลุ่มนี้ต่อยอดสู่ Agentic AI ได้เร็วกว่าคนอื่น</div>
+
+      <div class="vq-block">
+        <label class="vq-label">1. ความถี่ใช้ AI สร้างโค้ดแทนการพิมพ์เอง</label>
+        <div class="radio-group" id="vq1"></div>
+      </div>
+      <div class="vq-block">
+        <label class="vq-label">2. ระดับที่ทำได้จริงด้วย AI</label>
+        <div class="radio-group" id="vq2"></div>
+      </div>
+      <div class="vq-block">
+        <label class="vq-label">3. สัดส่วน Feature ที่ทำด้วย AI ได้</label>
+        <div class="radio-group" id="vq3"></div>
+      </div>
+      <div class="vq-block">
+        <label class="vq-label">4. Vibe Coding Tools ที่ใช้บ่อย</label>
+        <div class="tool-grid" id="vibe-tools"></div>
+      </div>
+      <div class="vq-block" style="margin-bottom:0">
+        <label class="vq-label">5. Self-rating ระดับ Vibe Coder ของตัวเอง</label>
+        <div class="vibe-level-grid" id="vc-tier-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: เครื่องมือ + ความสนใจ -->
+  <div class="section-card">
+    <div class="section-head">
+      <div class="section-icon si-tools" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 00-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 005.4-5.4l-2 2-3-3 2-2z"/></svg>
+      </div>
+      <div class="section-meta">
+        <h2>เครื่องมือ AI &amp; ความสนใจ</h2>
+        <p>เครื่องมือที่ใช้งานและทิศทางการพัฒนา</p>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">เครื่องมือ AI ที่ใช้อยู่</div>
+    <div class="tool-grid" id="tool-checks" style="margin-bottom:1.25rem"></div>
+    <div class="form-grid" style="margin-bottom:0.75rem">
+      <div class="form-group">
+        <label class="form-label">ด้านที่อยากพัฒนามากที่สุด</label>
+        <select id="f-interest">
+          <option value="">-- เลือก --</option>
+          <option>Prompt Engineering ขั้นสูง</option><option>LangChain / LangGraph</option>
+          <option>การสร้าง AI Agent</option><option>RAG / Vector Database</option>
+          <option>MCP Integration</option><option>Vibe Coding ขั้นสูง</option>
+          <option>AI-assisted Coding</option><option>Data Pipeline + AI</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">เวลาเรียนรู้ต่อสัปดาห์</label>
+        <select id="f-time">
+          <option value="">-- เลือก --</option>
+          <option>น้อยกว่า 2 ชม.</option><option>2-4 ชม.</option>
+          <option>4-8 ชม.</option><option>มากกว่า 8 ชม.</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">GitHub repo (บังคับ) — มากกว่า 1 คั่นด้วย comma</label>
+      <input type="text" id="f-github" placeholder="เช่น https://github.com/org/repo1, https://github.com/org/repo2">
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-section">
+    <button class="btn-reset" onclick="resetForm()">รีเซ็ต</button>
+    <button class="btn-submit" id="submit-btn" onclick="submitSurvey()">
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      บันทึกข้อมูล
+    </button>
+  </div>
+  <div class="toast toast-ok"  id="ok-toast"><span class="toast-icon">✅</span><span id="ok-msg"></span></div>
+  <div class="toast toast-err" id="err-toast"><span class="toast-icon">⚠️</span><span id="err-msg"></span></div>
+
+</div><!-- /wrapper -->
+
+<script>
+// Use same-origin when served by FastAPI (works across ports/hosts)
+const API_BASE = window.location.origin;
+
+// ─── Static data ───────────────────────────────────────────────────────────
+const skills = [
+  {id:'s1', name:'Prompt Engineering',           tag:'พื้นฐาน AI'},
+  {id:'s2', name:'AI Agent / Agentic Workflow',  tag:'Core'},
+  {id:'s3', name:'LangChain / LangGraph',        tag:'Framework'},
+  {id:'s4', name:'RAG & Vector DB',              tag:'Knowledge'},
+  {id:'s5', name:'MCP (Model Context Protocol)', tag:'Integration'},
+  {id:'s6', name:'Cursor / AI-assisted IDE',     tag:'Dev Tool'},
+  {id:'s7', name:'API Integration กับ LLM',     tag:'Dev'},
+  {id:'s8', name:'Data Pipeline + AI',           tag:'Data'},
+  {id:'s9', name:'System Design สำหรับ AI',      tag:'Architecture'},
+  {id:'s10',name:'AI Project Management',        tag:'PM/SA'},
+];
+const vq1opts = [
+  {v:'never',    l:'ไม่เคย — เขียนโค้ดเองทั้งหมด'},
+  {v:'sometimes',l:'บางครั้ง — ให้ AI ช่วย snippet'},
+  {v:'often',    l:'บ่อย — ให้ AI generate แล้วปรับแก้'},
+  {v:'always',   l:'เกือบทุกครั้ง — อธิบาย AI แล้วได้โค้ดเลย'},
+];
+const vq2opts = [
+  {v:'lv0',l:'แก้ Bug เล็กน้อยจาก AI'},
+  {v:'lv1',l:'สร้าง Function / Component ได้'},
+  {v:'lv2',l:'สร้าง Feature เต็มรูปแบบได้'},
+  {v:'lv3',l:'สร้างระบบ End-to-end ด้วย AI เป็นหลัก'},
+];
+const vq3opts = [
+  {v:'no',     l:'ไม่เคย'},
+  {v:'tried',  l:'เคยลอง แต่ยังพึ่งตัวเองมาก'},
+  {v:'partial',l:'ได้บางส่วน ~50%'},
+  {v:'mostly', l:'ได้เกิน 70%'},
+  {v:'full',   l:'ได้เกือบ 100% ผ่าน AI'},
+];
+const vcTiers = [
+  {id:'vc0',l:'Viewer',    d:'ยังไม่ได้ลอง'},
+  {id:'vc1',l:'Learner',   d:'เริ่มลองใช้'},
+  {id:'vc2',l:'Vibe Coder',d:'สร้าง Feature ได้'},
+  {id:'vc3',l:'Power Vibe',d:'End-to-end'},
+];
+const vibeToolsList = ['Cursor','GitHub Copilot','v0 by Vercel','Windsurf','Bolt.new','Lovable','Replit AI','Claude Artifacts','Google Antigravity','Trae','Qoder'];
+const aiToolsList   = ['Cursor','ChatGPT','Claude','GitHub Copilot','Gemini','NotebookLM','LangChain','n8n / Zapier'];
+
+// ─── State ─────────────────────────────────────────────────────────────────
+const scores = {};
+const va = {vq1:'', vq2:'', vq3:''};
+let selVcTier = '';
+
+// ─── Build UI ──────────────────────────────────────────────────────────────
+function buildSkills() {
+  const g = document.getElementById('skill-grid');
+  skills.forEach(sk => {
+    scores[sk.id] = -1;
+    const r = document.createElement('div'); r.className = 'sk-row';
+    r.innerHTML =
+      `<div class="sk-left"><div class="sk-tag">${sk.tag}</div><div class="sk-name">${sk.name}</div></div>`
+      + `<div class="lvl-btns">${[0,1,2,3,4].map(l =>
+          `<button class="lb" data-sk="${sk.id}" onclick="setLv('${sk.id}',${l},this)">${l}</button>`
+        ).join('')}</div>`;
+    g.appendChild(r);
+  });
+}
+
+function setLv(id, lv, btn) {
+  scores[id] = lv;
+  document.querySelectorAll(`[data-sk="${id}"]`).forEach(b => b.className = 'lb');
+  btn.className = `lb a${lv}`;
+  updateTotal();
+}
+
+function updateTotal() {
+  let t = 0; skills.forEach(sk => { if (scores[sk.id] >= 0) t += scores[sk.id]; });
+  document.getElementById('total-score').innerHTML = `${t} <span>/ 40</span>`;
+  const tier = getTier(t);
+  document.getElementById('total-tier').innerHTML = `<span class="tbadge ${tier.c}">${tier.l}</span>`;
+}
+
+function getTier(n) {
+  if (n <= 8)  return {l:'Beginner',     c:'t0'};
+  if (n <= 16) return {l:'Awareness',    c:'t1'};
+  if (n <= 24) return {l:'Practitioner', c:'t2'};
+  if (n <= 32) return {l:'Advanced',     c:'t3'};
+  return {l:'Expert', c:'t4'};
+}
+
+function buildRadio(cid, opts, key) {
+  const w = document.getElementById(cid);
+  opts.forEach(o => {
+    const d = document.createElement('div'); d.className = 'radio-opt';
+    d.innerHTML = `<input type="radio" name="${key}" value="${o.v}"><span>${o.l}</span>`;
+    d.onclick = () => {
+      document.querySelectorAll(`[name="${key}"]`).forEach(r => r.closest('.radio-opt').classList.remove('sel'));
+      d.querySelector('input').checked = true; d.classList.add('sel'); va[key] = o.v;
+    };
+    w.appendChild(d);
+  });
+}
+
+function buildVcBar() {
+  const b = document.getElementById('vc-tier-bar');
+  vcTiers.forEach(t => {
+    const d = document.createElement('div'); d.className = 'vl-card'; d.id = 'vct-' + t.id;
+    d.innerHTML = `<div class="vl-title">${t.l}</div><div class="vl-sub">${t.d}</div>`;
+    d.onclick = () => {
+      document.querySelectorAll('.vl-card').forEach(e => e.classList.remove('active'));
+      d.classList.add('active'); selVcTier = t.l;
+    };
+    b.appendChild(d);
+  });
+}
+
+function buildChecks(cid, items) {
+  const w = document.getElementById(cid);
+  items.forEach(t => {
+    const l = document.createElement('label'); l.className = 'tool-check';
+    l.innerHTML = `<input type="checkbox" value="${t}">${t}`;
+    w.appendChild(l);
+  });
+}
+
+function getChecked(cid) {
+  return [...document.querySelectorAll(`#${cid} input:checked`)].map(c => c.value);
+}
+
+function isHP() {
+  return va.vq1==='often'||va.vq1==='always'||va.vq2==='lv2'||va.vq2==='lv3'
+      ||va.vq3==='mostly'||va.vq3==='full'||selVcTier==='Vibe Coder'||selVcTier==='Power Vibe';
+}
+
+// ─── Submit ─────────────────────────────────────────────────────────────────
+async function submitSurvey() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('กรุณากรอกชื่อ'); return; }
+  const yy = (document.getElementById('f-yy').value || '').trim();
+  const mm = (document.getElementById('f-mm').value || '').trim();
+  const email = (document.getElementById('f-email').value || '').trim();
+  if (!yy || !mm || !email) {
+    alert('กรุณากรอก YY, MM และ Email ให้ครบ');
+    return;
+  }
+  if (!/^\d{2}$/.test(yy)) { alert('YY ต้องเป็นตัวเลข 2 หลัก เช่น 26'); return; }
+  if (!/^\d{2}$/.test(mm) || Number(mm) < 1 || Number(mm) > 12) { alert('MM ต้องเป็น 01-12'); return; }
+  if (!email.includes('@') || email.length < 5) { alert('กรุณากรอก Email ให้ถูกต้อง'); return; }
+  const ghRaw = (document.getElementById('f-github').value || '').trim();
+  const github_repos = ghRaw.split(',').map(s=>s.trim()).filter(Boolean);
+  if (github_repos.length < 2){
+    alert('กรุณากรอก GitHub repo มากกว่า 1 รายการ และคั่นด้วย comma');
+    return;
+  }
+
+  let total = 0;
+  skills.forEach(sk => { if (scores[sk.id] >= 0) total += scores[sk.id]; });
+  const tier = getTier(total);
+
+  const vq1Map = {never:'ไม่เคย',sometimes:'บางครั้ง',often:'บ่อย',always:'เกือบทุกครั้ง'};
+  const vq2Map = {lv0:'Bug fix',lv1:'Function/Component',lv2:'Feature เต็ม',lv3:'End-to-end'};
+  const vq3Map = {no:'ไม่เคย',tried:'พึ่งตัวเองมาก',partial:'~50%',mostly:'70%+',full:'~100%'};
+
+  const payload = {
+    yy, mm, email,
+    name,
+    role:              document.getElementById('f-role').value||'',
+    team:              document.getElementById('f-team').value||'',
+    exp:               document.getElementById('f-exp').value||'',
+    total_score:       total,
+    tier:              tier.l,
+    skills:            skills.reduce((acc,sk)=>{acc[sk.name]=scores[sk.id]>=0?scores[sk.id]:0;return acc;},{}),
+    vibe_level:        selVcTier||'',
+    vq1:               vq1Map[va.vq1]||'',
+    vq2:               vq2Map[va.vq2]||'',
+    vq3:               vq3Map[va.vq3]||'',
+    vibe_tools:        getChecked('vibe-tools'),
+    ai_tools:          getChecked('tool-checks'),
+    is_high_potential: isHP(),
+    interest:          document.getElementById('f-interest').value||'',
+    learning_time:     document.getElementById('f-time').value||'',
+    github_repos,
+  };
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> กำลังบันทึก...';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/survey`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if (!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.detail||`HTTP ${res.status}`);}
+    showToast('ok', `บันทึกข้อมูลของ "${name}" เรียบร้อยแล้ว${isHP()?' 🌟 High-potential Vibe Coder!':''}`);
+  } catch(err) {
+    showToast('err', `${err.message} — ตรวจสอบว่า Server รันอยู่ที่ port 8000`);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2"><path d="M5 12h14M12 5l7 7-7 7"/></svg> บันทึกข้อมูล`;
+  }
+}
+
+function showToast(type, msg) {
+  const ok = document.getElementById('ok-toast');
+  const err = document.getElementById('err-toast');
+  ok.style.display = err.style.display = 'none';
+  if (type==='ok'){document.getElementById('ok-msg').textContent=msg;ok.style.display='flex';setTimeout(()=>ok.style.display='none',6000);}
+  if (type==='err'){document.getElementById('err-msg').textContent=msg;err.style.display='flex';setTimeout(()=>err.style.display='none',8000);}
+}
+
+// ─── Reset ─────────────────────────────────────────────────────────────────
+function resetForm() {
+  document.getElementById('f-name').value='';
+  ['f-yy','f-mm','f-email','f-role','f-team','f-exp','f-interest','f-time'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-github').value='';
+  skills.forEach(sk=>scores[sk.id]=-1);
+  document.querySelectorAll('.lb').forEach(b=>b.className='lb');
+  document.querySelectorAll('.radio-opt').forEach(el=>{el.classList.remove('sel');el.querySelector('input').checked=false;});
+  document.querySelectorAll('.vl-card').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('#vibe-tools input,#tool-checks input').forEach(c=>c.checked=false);
+  Object.keys(va).forEach(k=>va[k]='');
+  selVcTier='';
+  document.getElementById('total-score').innerHTML='0 <span>/ 40</span>';
+  document.getElementById('total-tier').innerHTML='—';
+  document.getElementById('ok-toast').style.display='none';
+  document.getElementById('err-toast').style.display='none';
+}
+
+// ─── Init ──────────────────────────────────────────────────────────────────
+buildSkills();
+buildRadio('vq1',vq1opts,'vq1');
+buildRadio('vq2',vq2opts,'vq2');
+buildRadio('vq3',vq3opts,'vq3');
+buildVcBar();
+buildChecks('vibe-tools',vibeToolsList);
+buildChecks('tool-checks',aiToolsList);
+// default YY/MM to current
+(() => {
+  const d = new Date();
+  const yy = String(d.getFullYear() % 100).padStart(2,'0');
+  const mm = String(d.getMonth() + 1).padStart(2,'0');
+  const yyEl = document.getElementById('f-yy');
+  const mmEl = document.getElementById('f-mm');
+  if (yyEl && !yyEl.value) yyEl.value = yy;
+  if (mmEl && !mmEl.value) mmEl.value = mm;
+})();
+</script>
+</body>
+</html>

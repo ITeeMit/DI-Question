@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — DI Team Summary Dashboard</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0B1020;
+      --surface:rgba(255,255,255,0.06);
+      --surface2:rgba(255,255,255,0.08);
+      --border:rgba(255,255,255,0.12);
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,0.68);
+      --muted2:rgba(234,240,255,0.48);
+      --accent:#7C3AED;
+      --accent2:#22C55E;
+      --warn:#F59E0B;
+      --danger:#EF4444;
+      --shadow:0 10px 40px rgba(0,0,0,0.35);
+      --r:14px;
+      --rsm:10px;
+    }
+    body{
+      font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+      background:radial-gradient(1200px 800px at 20% 10%, rgba(124,58,237,0.35), transparent 55%),
+                 radial-gradient(1200px 800px at 80% 10%, rgba(34,197,94,0.25), transparent 50%),
+                 linear-gradient(180deg, #090E1C, #0B1020);
+      color:var(--text);
+      min-height:100vh;
+    }
+    a{color:inherit;text-decoration:none}
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter: blur(10px);
+      background:rgba(11,16,32,0.55);
+      border-bottom:1px solid var(--border);
+    }
+    .topbar-inner{
+      max-width:1320px;margin:0 auto;padding:14px 16px;
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+    }
+    .brand{display:flex;align-items:center;gap:10px;min-width:0}
+    .logo{
+      width:34px;height:34px;border-radius:10px;
+      background:linear-gradient(135deg, rgba(124,58,237,1), rgba(34,197,94,1));
+      box-shadow:0 10px 22px rgba(124,58,237,0.25);
+    }
+    .brand h1{font-size:14px;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .brand p{font-size:12px;color:var(--muted);margin-top:1px}
+    .nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border:1px solid var(--border);
+      border-radius:999px;background:rgba(255,255,255,0.05);
+      font-size:12px;color:var(--muted);
+      transition:all .12s ease;
+    }
+    .pill:hover{background:rgba(255,255,255,0.08);color:var(--text);border-color:rgba(255,255,255,0.18)}
+    .wrap{max-width:1320px;margin:0 auto;padding:18px 16px 56px}
+    .stack{display:flex;flex-direction:column;gap:14px;align-items:stretch}
+    .main-wide{width:100%}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card-h{
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(255,255,255,0.10);
+      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+    }
+    .card-h h2{font-size:13px;letter-spacing:0.02em}
+    .card-h p{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5}
+    .card-b{padding:12px 14px 14px}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    @media(max-width:760px){ .kpis{grid-template-columns:repeat(2,1fr)} }
+    @media(min-width:1400px){
+      .brand h1{font-size:15px}
+      .card-h h2{font-size:14px}
+      .kpi .v{font-size:24px}
+      td{font-size:13px}
+    }
+    .kpi{
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.04);
+      border-radius:var(--rsm);
+      padding:12px 12px;
+    }
+    .kpi .l{font-size:11px;color:var(--muted2);letter-spacing:0.06em;text-transform:uppercase}
+    .kpi .v{font-size:22px;font-weight:700;margin-top:6px;letter-spacing:-0.02em}
+    .kpi .s{font-size:12px;color:var(--muted);margin-top:3px}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.05);
+      font-size:12px;color:var(--muted);
+    }
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:10px 12px;border-radius:12px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.06);
+      color:var(--text);
+      cursor:pointer;
+      font-size:12px;font-weight:600;
+      transition:all .12s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{background:rgba(255,255,255,0.10)}
+    .btn.primary{
+      background:linear-gradient(135deg, rgba(124,58,237,1), rgba(124,58,237,0.75));
+      border-color:rgba(124,58,237,0.55);
+    }
+    .btn.primary:hover{filter:brightness(1.05)}
+    .btn.green{
+      background:linear-gradient(135deg, rgba(34,197,94,1), rgba(34,197,94,0.75));
+      border-color:rgba(34,197,94,0.55);
+    }
+    .btn.danger{
+      background:rgba(239,68,68,0.12);
+      border-color:rgba(239,68,68,0.35);
+      color:#FFD2D2;
+    }
+    .btn.danger:hover{background:rgba(239,68,68,0.18)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    input,select{
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.14);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:12px;
+      outline:none;
+      min-width:160px;
+    }
+    input::placeholder{color:rgba(234,240,255,0.40)}
+    select option{color:#0B1020}
+    .section{margin-top:12px}
+    .subttl{font-size:12px;color:var(--muted);margin-bottom:8px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,0.10);vertical-align:top}
+    th{font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:0.08em;text-align:left}
+    td{font-size:12px;color:rgba(234,240,255,0.88)}
+    .muted{color:var(--muted)}
+    .right{text-align:right}
+    .mono{font-variant-numeric: tabular-nums; font-feature-settings:"tnum" 1}
+    .tiny{font-size:11px;color:var(--muted2)}
+    .chip{
+      display:inline-flex;align-items:center;
+      padding:3px 9px;border-radius:999px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:rgba(255,255,255,0.05);
+      font-size:11px;color:var(--muted);
+      white-space:nowrap;
+    }
+    .tier{font-weight:700}
+    .t0{color:#E5E7EB}
+    .t1{color:#93C5FD}
+    .t2{color:#86EFAC}
+    .t3{color:#C4B5FD}
+    .t4{color:#6EE7B7}
+    .toast{
+      display:none;align-items:flex-start;gap:10px;
+      margin-top:12px;
+      border-radius:14px;
+      padding:12px 12px;
+      border:1px solid rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.06);
+      color:var(--text);
+    }
+    .toast.ok{border-color:rgba(34,197,94,0.35);background:rgba(34,197,94,0.08)}
+    .toast.err{border-color:rgba(239,68,68,0.35);background:rgba(239,68,68,0.08)}
+    .toast .ic{font-size:16px;line-height:1}
+    .split{
+      display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    }
+    @media(max-width:760px){ .split{grid-template-columns:1fr} }
+    .hr{height:1px;background:rgba(255,255,255,0.10);margin:12px 0}
+    .chart-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    @media(max-width:980px){ .chart-grid{grid-template-columns:1fr} }
+    .chart-card{
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.04);
+      border-radius:14px;
+      padding:10px 10px 8px;
+    }
+    .chart-head{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      margin-bottom:8px;
+    }
+    .chart-title{font-size:12px;font-weight:800;letter-spacing:0.02em}
+    .chart-sub{font-size:11px;color:var(--muted2);margin-top:2px;line-height:1.4}
+    .chart-canvas{
+      width:100%;
+      height:220px;
+      display:block;
+      border-radius:12px;
+      background:rgba(0,0,0,0.14);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+    @media(min-width:1400px){ .chart-canvas{height:250px} }
+    .overlay{
+      position:fixed;inset:0;z-index:999;
+      background:rgba(0,0,0,0.55);
+      backdrop-filter: blur(8px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .modal{
+      width:100%;
+      max-width:420px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+      box-shadow:0 24px 80px rgba(0,0,0,0.55);
+      overflow:hidden;
+    }
+    .modal-h{
+      padding:14px 14px 12px;
+      border-bottom:1px solid rgba(255,255,255,0.10);
+      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+    }
+    .modal-h .t{font-size:13px;font-weight:800;letter-spacing:0.02em}
+    .modal-h .d{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+    .modal-b{padding:14px}
+    .pin{
+      width:100%;
+      font-size:16px;
+      letter-spacing:0.22em;
+      text-align:center;
+      padding:12px 12px;
+    }
+    .errtxt{display:none;margin-top:10px;font-size:12px;color:#FFD2D2}
+  </style>
+</head>
+<body>
+  <div class="overlay" id="pin-ol">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="pin-title">
+      <div class="modal-h">
+        <div>
+          <div class="t" id="pin-title">Admin PIN</div>
+          <div class="d">กรุณาใส่รหัส PIN เพื่อเข้าใช้งาน Summary Dashboard</div>
+        </div>
+      </div>
+      <div class="modal-b">
+        <div class="row" style="gap:10px">
+          <input id="pin-input" class="pin" inputmode="numeric" autocomplete="one-time-code" placeholder="••••••" />
+          <button class="btn primary" style="min-width:120px" onclick="pinLogin()">Unlock</button>
+        </div>
+        <div class="errtxt" id="pin-err">PIN ไม่ถูกต้อง</div>
+        <div class="tiny" style="margin-top:10px;color:var(--muted2)">หมายเหตุ: PIN ถูกตั้งค่าแบบ fix ในระบบ</div>
+      </div>
+    </div>
+  </div>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="logo"></div>
+        <div style="min-width:0">
+          <h1>Admin · Summary Dashboard</h1>
+          <p>DI Team — Agentic AI Readiness (monthly tracking)</p>
+        </div>
+      </div>
+      <div class="nav">
+        <a class="pill" href="/">← กลับไปแบบประเมิน</a>
+        <button class="btn" onclick="refreshAll()">รีเฟรชข้อมูล</button>
+        <button class="btn" onclick="logoutAdmin()">Logout</button>
+        <a class="pill" href="/docs" target="_blank" rel="noreferrer">API Docs</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-b" style="padding:16px 14px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div style="min-width:240px;max-width:860px">
+            <div style="font-size:12px;color:var(--muted2);letter-spacing:0.08em;text-transform:uppercase">DI Team</div>
+            <div style="font-size:22px;font-weight:800;letter-spacing:-0.02em;margin-top:6px">Summary Dashboard</div>
+            <div style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6">
+              ดูสรุปตามคน/ทีม/ตำแหน่ง และ track รายเดือนเพื่อเทียบแนวโน้ม
+            </div>
+          </div>
+          <div class="row" style="align-items:flex-end">
+            <a class="btn" href="/api/export/csv" target="_blank" rel="noreferrer">Export CSV</a>
+            <button class="btn primary" onclick="refreshAll()">Refresh</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="card main-wide">
+        <div class="card-h">
+          <div>
+            <h2>ภาพรวมทั้งองค์กร</h2>
+            <p>สรุปคะแนนเฉลี่ย, สัดส่วน High-potential, และรายชื่อรายบุคคลเรียงตามคะแนน</p>
+          </div>
+          <div class="row">
+            <span class="badge" id="last-updated">กำลังโหลด…</span>
+          </div>
+        </div>
+        <div class="card-b">
+          <div class="kpis">
+            <div class="kpi">
+              <div class="l">Responses</div>
+              <div class="v mono" id="k-total">—</div>
+              <div class="s">จำนวนคนที่ตอบ</div>
+            </div>
+            <div class="kpi">
+              <div class="l">Average score</div>
+              <div class="v mono" id="k-avg">—</div>
+              <div class="s">คะแนนเฉลี่ย (0–40)</div>
+            </div>
+            <div class="kpi">
+              <div class="l">High-potential</div>
+              <div class="v mono" id="k-hp">—</div>
+              <div class="s">จำนวน / เปอร์เซ็นต์</div>
+            </div>
+            <div class="kpi">
+              <div class="l">Top skill (avg)</div>
+              <div class="v" id="k-top-skill">—</div>
+              <div class="s tiny" id="k-top-skill-sub">—</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="subttl">Graphs (ช่วยวิเคราะห์เร็วขึ้น)</div>
+            <div class="chart-grid">
+              <div class="chart-card">
+                <div class="chart-head">
+                  <div>
+                    <div class="chart-title">แนวโน้ม Avg Score (รายเดือน)</div>
+                    <div class="chart-sub">แสดง 12 เดือนล่าสุด (ถ้ามีข้อมูล)</div>
+                  </div>
+                  <span class="chip mono" id="ch-snap-count">—</span>
+                </div>
+                <canvas class="chart-canvas" id="ch-trend"></canvas>
+              </div>
+              <div class="chart-card">
+                <div class="chart-head">
+                  <div>
+                    <div class="chart-title">Tier Distribution</div>
+                    <div class="chart-sub">สัดส่วนระดับ (จากข้อมูลปัจจุบัน)</div>
+                  </div>
+                </div>
+                <canvas class="chart-canvas" id="ch-tier"></canvas>
+              </div>
+              <div class="chart-card">
+                <div class="chart-head">
+                  <div>
+                    <div class="chart-title">Vibe Level Distribution</div>
+                    <div class="chart-sub">สัดส่วน Vibe Level (จากข้อมูลปัจจุบัน)</div>
+                  </div>
+                </div>
+                <canvas class="chart-canvas" id="ch-vibe"></canvas>
+              </div>
+              <div class="chart-card">
+                <div class="chart-head">
+                  <div>
+                    <div class="chart-title">Top Skills (Avg)</div>
+                    <div class="chart-sub">Top 6 skills เฉลี่ยสูงสุด</div>
+                  </div>
+                </div>
+                <canvas class="chart-canvas" id="ch-skill"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="subttl">ตารางรายบุคคล</div>
+            <div style="overflow:auto;border:1px solid rgba(255,255,255,0.10);border-radius:14px">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="min-width:210px">Name</th>
+                    <th style="min-width:160px">Role</th>
+                    <th style="min-width:140px">Team</th>
+                    <th class="right" style="min-width:90px">Score</th>
+                    <th style="min-width:130px">Tier</th>
+                    <th style="min-width:150px">Vibe Level</th>
+                    <th class="right" style="min-width:110px">High-potential</th>
+                    <th class="right" style="min-width:110px">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tb-people">
+                  <tr><td colspan="8" class="muted">กำลังโหลด…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h">
+          <div>
+            <h2>สรุปตามทีม / ตำแหน่ง</h2>
+            <p>ดูจำนวนคน, คะแนนเฉลี่ย และ HP% ต่อกลุ่ม</p>
+          </div>
+          <div class="row">
+            <select id="group-mode" onchange="renderGroups()">
+              <option value="team">ตามทีม (Team)</option>
+              <option value="role">ตามตำแหน่ง (Role)</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-b">
+          <div style="overflow:auto;border:1px solid rgba(255,255,255,0.10);border-radius:14px">
+            <table>
+              <thead>
+                <tr>
+                  <th id="th-group">Group</th>
+                  <th class="right">Count</th>
+                  <th class="right">Avg</th>
+                  <th class="right">HP</th>
+                  <th class="right">HP%</th>
+                </tr>
+              </thead>
+              <tbody id="tb-groups">
+                <tr><td colspan="5" class="muted">กำลังโหลด…</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="section">
+            <div class="subttl">Monthly tracking (ไม่ใช้ snapshots)</div>
+            <div class="split">
+              <div>
+                <div class="tiny" style="margin-bottom:6px;color:var(--muted2)">เลือกเดือนเพื่อดูสรุปแบบรายเดือน</div>
+                <div class="row">
+                  <select id="m-view" onchange="applyMonthView()"></select>
+                  <button class="btn" onclick="applyMonthView()">Apply</button>
+                </div>
+                <div class="tiny" style="margin-top:8px;color:var(--muted2)">หมายเหตุ: ข้อมูลรายเดือนอิงจากฟิลด์ YY/MM ในแบบประเมิน</div>
+              </div>
+              <div>
+                <div class="tiny" style="margin-bottom:6px;color:var(--muted2)">เปรียบเทียบเดือน A กับ B</div>
+                <div class="row">
+                  <select id="m-a"></select>
+                  <select id="m-b"></select>
+                  <button class="btn primary" onclick="compareMonths()">Compare</button>
+                </div>
+                <div class="tiny" style="margin-top:8px;color:var(--muted2)">แนะนำ: A = เดือนก่อน, B = เดือนปัจจุบัน</div>
+              </div>
+            </div>
+
+            <div class="section" id="cmp-wrap" style="display:none;margin-top:12px">
+              <div class="subttl">ผลต่าง (B − A)</div>
+              <div style="overflow:auto;border:1px solid rgba(255,255,255,0.10);border-radius:14px">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Metric</th>
+                      <th class="right">A</th>
+                      <th class="right">B</th>
+                      <th class="right">Δ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tb-cmp"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="section" style="margin-top:12px">
+              <div class="subttl">รายการเดือนที่มีข้อมูล</div>
+              <div style="overflow:auto;border:1px solid rgba(255,255,255,0.10);border-radius:14px">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th class="right">Count</th>
+                      <th class="right">Avg</th>
+                      <th class="right">HP</th>
+                      <th class="right">HP%</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tb-months">
+                    <tr><td colspan="5" class="muted">กำลังโหลด…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    let summary = null;
+    let people = [];
+    let months = [];
+    let monthSummaries = {};
+    let monthView = {yy:'', mm:''};
+
+    const COLORS = {
+      grid: 'rgba(255,255,255,0.10)',
+      axis: 'rgba(255,255,255,0.35)',
+      text: 'rgba(234,240,255,0.75)',
+      text2: 'rgba(234,240,255,0.55)',
+      accent: 'rgba(124,58,237,1)',
+      accentSoft: 'rgba(124,58,237,0.25)',
+      green: 'rgba(34,197,94,1)',
+      greenSoft: 'rgba(34,197,94,0.22)',
+      cyan: 'rgba(56,189,248,1)',
+      cyanSoft: 'rgba(56,189,248,0.20)',
+      orange: 'rgba(245,158,11,1)',
+      orangeSoft: 'rgba(245,158,11,0.20)'
+    };
+
+    function tierClass(t){
+      const s = (t||'').toLowerCase();
+      if (s.includes('beginner')) return 't0';
+      if (s.includes('awareness')) return 't1';
+      if (s.includes('practitioner')) return 't2';
+      if (s.includes('advanced')) return 't3';
+      if (s.includes('expert')) return 't4';
+      return 't0';
+    }
+
+    function fmtDelta(n){
+      const sign = n > 0 ? '+' : '';
+      return `${sign}${n}`;
+    }
+
+    async function jget(path){
+      const res = await fetch(`${API_BASE}${path}`);
+      if(!res.ok){
+        const e = await res.json().catch(()=>({}));
+        throw new Error(e.detail || `HTTP ${res.status}`);
+      }
+      return res.json();
+    }
+
+    function fitCanvas(c){
+      const dpr = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1));
+      const rect = c.getBoundingClientRect();
+      const w = Math.max(10, Math.floor(rect.width));
+      const h = Math.max(10, Math.floor(rect.height));
+      c.width = Math.floor(w * dpr);
+      c.height = Math.floor(h * dpr);
+      const ctx = c.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return {ctx, w, h};
+    }
+
+    function clearChart(ctx,w,h){
+      ctx.clearRect(0,0,w,h);
+      // subtle background
+      const g = ctx.createLinearGradient(0,0,0,h);
+      g.addColorStop(0,'rgba(255,255,255,0.03)');
+      g.addColorStop(1,'rgba(255,255,255,0.00)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,w,h);
+    }
+
+    function drawAxes(ctx, box, yMin, yMax, yTicks=4){
+      const {x,y,w,h, padL, padR, padT, padB} = box;
+      ctx.strokeStyle = COLORS.grid;
+      ctx.lineWidth = 1;
+      for(let i=0;i<=yTicks;i++){
+        const yy = y + padT + (h-padT-padB) * (i/yTicks);
+        ctx.beginPath();
+        ctx.moveTo(x+padL, yy);
+        ctx.lineTo(x+w-padR, yy);
+        ctx.stroke();
+      }
+      // y labels
+      ctx.fillStyle = COLORS.text2;
+      ctx.font = '11px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      for(let i=0;i<=yTicks;i++){
+        const v = yMax - (yMax-yMin) * (i/yTicks);
+        const yy = y + padT + (h-padT-padB) * (i/yTicks);
+        ctx.fillText(String(Math.round(v*10)/10), x+padL-8, yy);
+      }
+      // axis line
+      ctx.strokeStyle = COLORS.axis;
+      ctx.beginPath();
+      ctx.moveTo(x+padL, y+padT);
+      ctx.lineTo(x+padL, y+h-padB);
+      ctx.lineTo(x+w-padR, y+h-padB);
+      ctx.stroke();
+    }
+
+    function drawLineChart(canvas, labels, values, opts){
+      const {ctx,w,h} = fitCanvas(canvas);
+      clearChart(ctx,w,h);
+      const padL = 42, padR = 12, padT = 12, padB = 28;
+      const box = {x:0,y:0,w,h,padL,padR,padT,padB};
+      const maxV = Math.max(...values, 0);
+      const minV = Math.min(...values, 0);
+      const yMax = opts?.yMax ?? (Math.ceil((maxV+0.01)*10)/10);
+      const yMin = opts?.yMin ?? (Math.floor((minV-0.01)*10)/10);
+      drawAxes(ctx, box, yMin, yMax, 4);
+
+      const innerW = w - padL - padR;
+      const innerH = h - padT - padB;
+      const n = values.length;
+      if(n <= 0){
+        ctx.fillStyle = COLORS.text2;
+        ctx.font = '12px system-ui, -apple-system, Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('ยังไม่มีข้อมูลรายเดือน', w/2, h/2);
+        return;
+      }
+
+      const x0 = padL;
+      const y0 = padT;
+      const sx = n === 1 ? 0 : innerW / (n - 1);
+      const toY = (v)=> y0 + innerH * (1 - (v - yMin) / Math.max(0.0001,(yMax-yMin)));
+
+      // area
+      ctx.beginPath();
+      ctx.moveTo(x0, y0+innerH);
+      for(let i=0;i<n;i++){
+        ctx.lineTo(x0 + sx*i, toY(values[i]));
+      }
+      ctx.lineTo(x0 + sx*(n-1), y0+innerH);
+      ctx.closePath();
+      ctx.fillStyle = opts?.area ?? COLORS.accentSoft;
+      ctx.fill();
+
+      // line
+      ctx.beginPath();
+      for(let i=0;i<n;i++){
+        const xx = x0 + sx*i;
+        const yy = toY(values[i]);
+        if(i===0) ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+      }
+      ctx.strokeStyle = opts?.line ?? COLORS.accent;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // points
+      ctx.fillStyle = opts?.line ?? COLORS.accent;
+      for(let i=0;i<n;i++){
+        const xx = x0 + sx*i;
+        const yy = toY(values[i]);
+        ctx.beginPath();
+        ctx.arc(xx,yy,3,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      // x labels (show up to 6)
+      const step = Math.max(1, Math.ceil(n/6));
+      ctx.fillStyle = COLORS.text2;
+      ctx.font = '11px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      for(let i=0;i<n;i+=step){
+        const xx = x0 + sx*i;
+        const lbl = String(labels[i] ?? '').slice(0, 10);
+        ctx.fillText(lbl, xx, y0+innerH+8);
+      }
+    }
+
+    function drawBarChart(canvas, pairs, opts){
+      const {ctx,w,h} = fitCanvas(canvas);
+      clearChart(ctx,w,h);
+      const padL = 42, padR = 12, padT = 12, padB = 28;
+      const box = {x:0,y:0,w,h,padL,padR,padT,padB};
+      const vals = pairs.map(p=>p.v);
+      const maxV = Math.max(...vals, 1);
+      const yMax = opts?.yMax ?? maxV;
+      drawAxes(ctx, box, 0, yMax, 4);
+
+      const innerW = w - padL - padR;
+      const innerH = h - padT - padB;
+      const n = pairs.length;
+      if(n <= 0){
+        ctx.fillStyle = COLORS.text2;
+        ctx.font = '12px system-ui, -apple-system, Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('ไม่มีข้อมูล', w/2, h/2);
+        return;
+      }
+
+      const gap = 8;
+      const barW = Math.max(10, (innerW - gap*(n-1)) / n);
+      const x0 = padL;
+      const y0 = padT;
+      const toH = (v)=> innerH * (v / Math.max(0.0001,yMax));
+
+      for(let i=0;i<n;i++){
+        const xx = x0 + i*(barW+gap);
+        const hh = toH(pairs[i].v);
+        const yy = y0 + innerH - hh;
+        const grd = ctx.createLinearGradient(0,yy,0,yy+hh);
+        grd.addColorStop(0, opts?.fillTop ?? COLORS.green);
+        grd.addColorStop(1, opts?.fillBot ?? COLORS.greenSoft);
+        ctx.fillStyle = grd;
+        ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+        ctx.beginPath();
+        roundRect(ctx, xx, yy, barW, hh, 10);
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // labels
+      const step = Math.max(1, Math.ceil(n/6));
+      ctx.fillStyle = COLORS.text2;
+      ctx.font = '11px system-ui, -apple-system, Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      for(let i=0;i<n;i+=step){
+        const xx = x0 + i*(barW+gap) + barW/2;
+        ctx.fillText(String(pairs[i].k).slice(0,10), xx, y0+innerH+8);
+      }
+    }
+
+    function roundRect(ctx, x, y, w, h, r){
+      const rr = Math.max(0, Math.min(r, Math.min(w,h)/2));
+      ctx.moveTo(x+rr, y);
+      ctx.arcTo(x+w, y, x+w, y+h, rr);
+      ctx.arcTo(x+w, y+h, x, y+h, rr);
+      ctx.arcTo(x, y+h, x, y, rr);
+      ctx.arcTo(x, y, x+w, y, rr);
+      ctx.closePath();
+    }
+
+    function buildPairsFromDist(dist){
+      const out = [];
+      for (const [k,v] of Object.entries(dist || {})){
+        out.push({k, v: Number(v||0)});
+      }
+      return out.sort((a,b)=>b.v-a.v);
+    }
+
+    function renderCharts(){
+      // current summary charts
+      const tierPairs = buildPairsFromDist(summary?.tier_dist);
+      drawBarChart(document.getElementById('ch-tier'), tierPairs, {fillTop: COLORS.cyan, fillBot: COLORS.cyanSoft, yMax: Math.max(...tierPairs.map(x=>x.v), 1)});
+
+      const vibePairs = buildPairsFromDist(summary?.vibe_dist);
+      drawBarChart(document.getElementById('ch-vibe'), vibePairs, {fillTop: COLORS.orange, fillBot: COLORS.orangeSoft, yMax: Math.max(...vibePairs.map(x=>x.v), 1)});
+
+      const sAvg = summary?.skill_avg || {};
+      const topSkills = Object.entries(sAvg)
+        .map(([k,v])=>({k, v:Number(v||0)}))
+        .sort((a,b)=>b.v-a.v)
+        .slice(0,6);
+      drawBarChart(document.getElementById('ch-skill'), topSkills, {fillTop: COLORS.green, fillBot: COLORS.greenSoft, yMax: 4});
+
+      // monthly trend
+      const trend = buildMonthlyTrend();
+      document.getElementById('ch-snap-count').textContent = `${trend.values.length} months`;
+      drawLineChart(document.getElementById('ch-trend'), trend.labels, trend.values, {line: COLORS.accent, area: COLORS.accentSoft, yMin: 0, yMax: 40});
+    }
+
+    function buildMonthlyTrend(){
+      const ordered = months.slice(-12); // already sorted ASC
+      const labels = [];
+      const values = [];
+      for (const s of ordered){
+        labels.push(s.label);
+        values.push(Number(s.avg_score || 0));
+      }
+      return {labels, values};
+    }
+
+    function observeCharts(){
+      const ids = ['ch-tier','ch-vibe','ch-skill','ch-trend'];
+      const ro = new ResizeObserver(() => {
+        if (summary) renderCharts();
+      });
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) ro.observe(el);
+      });
+    }
+
+    function showPin(show){
+      const ol = document.getElementById('pin-ol');
+      ol.style.display = show ? 'flex' : 'none';
+      if (show){
+        document.getElementById('pin-input').value = '';
+        document.getElementById('pin-err').style.display = 'none';
+        setTimeout(()=> document.getElementById('pin-input').focus(), 50);
+      }
+    }
+
+    async function checkAdmin(){
+      try{
+        const j = await jget('/api/admin/me');
+        return !!j.ok;
+      }catch(_e){
+        return false;
+      }
+    }
+
+    async function pinLogin(){
+      const pin = document.getElementById('pin-input').value.trim();
+      const err = document.getElementById('pin-err');
+      err.style.display = 'none';
+      try{
+        const res = await fetch(`${API_BASE}/api/admin/login`,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({pin})
+        });
+        if(!res.ok){
+          err.style.display = 'block';
+          return;
+        }
+        showPin(false);
+        await refreshAll();
+      }catch(_e){
+        err.textContent = 'เชื่อมต่อไม่ได้';
+        err.style.display = 'block';
+      }
+    }
+
+    async function logoutAdmin(){
+      await fetch(`${API_BASE}/api/admin/logout`, {method:'POST'}).catch(()=>{});
+      showPin(true);
+    }
+
+    function setUpdated(){
+      const d = new Date();
+      document.getElementById('last-updated').textContent = `อัปเดตล่าสุด: ${d.toLocaleString()}`;
+    }
+
+    function renderKpis(){
+      document.getElementById('k-total').textContent = summary?.total ?? 0;
+      document.getElementById('k-avg').textContent = summary?.avg_score ?? '—';
+      const hp = summary?.hp_count ?? 0;
+      const hpPct = summary?.hp_pct ?? 0;
+      document.getElementById('k-hp').textContent = `${hp} (${hpPct}%)`;
+
+      const skillAvg = summary?.skill_avg || {};
+      let best = {k:'—', v:-1};
+      for (const [k,v] of Object.entries(skillAvg)){
+        if (typeof v === 'number' && v > best.v) best = {k, v};
+      }
+      document.getElementById('k-top-skill').textContent = best.k;
+      document.getElementById('k-top-skill-sub').textContent = best.v >= 0 ? `เฉลี่ย ${best.v.toFixed(2)} / 4` : '—';
+    }
+
+    function renderPeople(){
+      const tb = document.getElementById('tb-people');
+      if(!people.length){
+        tb.innerHTML = `<tr><td colspan="8" class="muted">ยังไม่มีข้อมูล</td></tr>`;
+        return;
+      }
+      tb.innerHTML = people.map(p => `
+        <tr>
+          <td><div style="font-weight:700">${escapeHtml(p.name||'')}</div><div class="tiny">${escapeHtml(p.exp||'')}</div></td>
+          <td>${escapeHtml(p.role||'—')}</td>
+          <td>${escapeHtml(p.team||'—')}</td>
+          <td class="right mono"><span class="chip">${p.total_score ?? 0}</span></td>
+          <td><span class="tier ${tierClass(p.tier)}">${escapeHtml(p.tier||'—')}</span></td>
+          <td>${escapeHtml(p.vibe_level||'—')}</td>
+          <td class="right">${p.is_high_potential ? '<span class="chip" style="border-color:rgba(34,197,94,0.35);background:rgba(34,197,94,0.08);color:#B8F7D0">Yes</span>' : '<span class="chip">No</span>'}</td>
+          <td class="right">
+            <button class="btn danger" onclick="deletePerson(${Number(p.id || 0)}, '${escapeHtml(p.name||'')}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function deletePerson(id, name){
+      if(!id) return;
+      if(!confirm(`ลบรายการของ "${name}" (id=${id}) ?`)) return;
+      const res = await fetch(`${API_BASE}/api/survey/${id}`, {method:'DELETE'});
+      if(!res.ok){
+        const e = await res.json().catch(()=>({}));
+        alert(e.detail || `HTTP ${res.status}`);
+        return;
+      }
+      await refreshAll();
+    }
+
+    function objToRows(obj, groupKey){
+      return Object.values(obj||{}).filter(Boolean).sort((a,b)=>(b.avg_score||0)-(a.avg_score||0)).map(g => ({
+        group: g[groupKey] || '—',
+        count: g.count || 0,
+        avg: g.avg_score ?? 0,
+        hp: g.hp_count || 0,
+        hpPct: g.hp_pct ?? 0
+      }));
+    }
+
+    function renderGroups(){
+      const mode = document.getElementById('group-mode').value;
+      const tb = document.getElementById('tb-groups');
+      const th = document.getElementById('th-group');
+      th.textContent = mode === 'team' ? 'Team' : 'Role';
+
+      const rows = mode === 'team'
+        ? objToRows(summary?.team_summary, 'team')
+        : objToRows(summary?.role_summary, 'role');
+
+      if(!rows.length){
+        tb.innerHTML = `<tr><td colspan="5" class="muted">ยังไม่มีข้อมูล</td></tr>`;
+        return;
+      }
+      tb.innerHTML = rows.map(r => `
+        <tr>
+          <td><div style="font-weight:700">${escapeHtml(r.group)}</div></td>
+          <td class="right mono">${r.count}</td>
+          <td class="right mono">${(r.avg ?? 0).toFixed(1)}</td>
+          <td class="right mono">${r.hp}</td>
+          <td class="right mono">${r.hpPct}%</td>
+        </tr>
+      `).join('');
+    }
+
+    function toast(idOk, idErr, ok, msg){
+      const okEl = document.getElementById(idOk);
+      const errEl = document.getElementById(idErr);
+      okEl.style.display = 'none';
+      errEl.style.display = 'none';
+      if(ok){
+        document.getElementById(idOk+'-msg').textContent = msg;
+        okEl.style.display = 'flex';
+        setTimeout(()=> okEl.style.display='none', 4500);
+      } else {
+        document.getElementById(idErr+'-msg').textContent = msg;
+        errEl.style.display = 'flex';
+        setTimeout(()=> errEl.style.display='none', 6500);
+      }
+    }
+
+    function renderMonthsTable(){
+      const tb = document.getElementById('tb-months');
+      if(!months.length){
+        tb.innerHTML = `<tr><td colspan="5" class="muted">ยังไม่มีข้อมูลรายเดือน</td></tr>`;
+        return;
+      }
+      tb.innerHTML = months.slice().reverse().map(m => `
+        <tr>
+          <td><span class="chip mono">${escapeHtml(m.label)}</span></td>
+          <td class="right mono">${m.count}</td>
+          <td class="right mono">${Number(m.avg_score||0).toFixed(1)}</td>
+          <td class="right mono">${m.hp_count}</td>
+          <td class="right mono">${m.hp_pct}%</td>
+        </tr>
+      `).join('');
+    }
+
+    function fillMonthSelects(){
+      const selView = document.getElementById('m-view');
+      const selA = document.getElementById('m-a');
+      const selB = document.getElementById('m-b');
+      const opts = months.map(m => `<option value="${m.yy}|${m.mm}">${escapeHtml(m.label)}</option>`).join('');
+      selView.innerHTML = opts;
+      selA.innerHTML = opts;
+      selB.innerHTML = opts;
+      if (months.length){
+        const last = months[months.length-1];
+        selView.value = `${last.yy}|${last.mm}`;
+      }
+      if (months.length >= 2){
+        const a = months[months.length-2];
+        const b = months[months.length-1];
+        selA.value = `${a.yy}|${a.mm}`;
+        selB.value = `${b.yy}|${b.mm}`;
+      }
+      document.getElementById('cmp-wrap').style.display = 'none';
+    }
+
+    async function loadMonths(){
+      months = await jget('/api/months');
+      fillMonthSelects();
+      renderMonthsTable();
+    }
+
+    function parseMonthVal(v){
+      const [yy, mm] = String(v||'').split('|');
+      return {yy, mm};
+    }
+
+    async function applyMonthView(){
+      const v = document.getElementById('m-view').value;
+      const {yy, mm} = parseMonthVal(v);
+      if (!yy || !mm) return;
+      monthView = {yy, mm};
+      monthSummaries = monthSummaries || {};
+      monthSummaries[`${yy}-${mm}`] = await jget(`/api/summary/month?yy=${encodeURIComponent(yy)}&mm=${encodeURIComponent(mm)}`);
+    }
+
+    async function compareMonths(){
+      const aV = document.getElementById('m-a').value;
+      const bV = document.getElementById('m-b').value;
+      if (!aV || !bV || aV === bV){
+        alert('กรุณาเลือกเดือน 2 อันที่ต่างกัน');
+        return;
+      }
+      const a = parseMonthVal(aV);
+      const b = parseMonthVal(bV);
+      const [A,B] = await Promise.all([
+        jget(`/api/summary/month?yy=${encodeURIComponent(a.yy)}&mm=${encodeURIComponent(a.mm)}`),
+        jget(`/api/summary/month?yy=${encodeURIComponent(b.yy)}&mm=${encodeURIComponent(b.mm)}`)
+      ]);
+      const rows = [];
+      const aTotal = A.total || 0, bTotal = B.total || 0;
+      const aAvg = Number(A.avg_score || 0), bAvg = Number(B.avg_score || 0);
+      const aHp = A.hp_count || 0, bHp = B.hp_count || 0;
+      const aHpPct = A.hp_pct || 0, bHpPct = B.hp_pct || 0;
+
+      rows.push(cmpRow('Responses', aTotal, bTotal, bTotal - aTotal));
+      rows.push(cmpRow('Avg score', aAvg.toFixed(1), bAvg.toFixed(1), Number((bAvg - aAvg).toFixed(1))));
+      rows.push(cmpRow('High-potential (count)', aHp, bHp, bHp - aHp));
+      rows.push(cmpRow('High-potential (%)', `${aHpPct}%`, `${bHpPct}%`, bHpPct - aHpPct));
+
+      const aSkills = A.skill_avg || {};
+      const bSkills = B.skill_avg || {};
+      let best = {k:'—', d:-999};
+      for (const k of new Set([...Object.keys(aSkills), ...Object.keys(bSkills)])){
+        const d = Number((Number(bSkills[k]||0) - Number(aSkills[k]||0)).toFixed(2));
+        if (d > best.d) best = {k, d};
+      }
+      rows.push(`
+        <tr>
+          <td>Best skill improvement</td>
+          <td class="right mono muted">—</td>
+          <td class="right mono muted">—</td>
+          <td class="right mono">${best.k === '—' ? '—' : `${escapeHtml(best.k)} (${fmtDelta(best.d)})`}</td>
+        </tr>
+      `);
+
+      document.getElementById('tb-cmp').innerHTML = rows.join('');
+      document.getElementById('cmp-wrap').style.display = '';
+    }
+
+    function cmpRow(label, a, b, delta){
+      return `
+        <tr>
+          <td>${escapeHtml(label)}</td>
+          <td class="right mono">${a}</td>
+          <td class="right mono">${b}</td>
+          <td class="right mono">${fmtDelta(delta)}</td>
+        </tr>
+      `;
+    }
+
+
+    function escapeHtml(s){
+      return String(s ?? '')
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#039;");
+    }
+
+    async function refreshAll(){
+      try{
+        [summary, people] = await Promise.all([jget('/api/summary'), jget('/api/survey')]);
+        renderKpis();
+        renderPeople();
+        renderGroups();
+        await loadMonths();
+        renderCharts();
+        setUpdated();
+      }catch(e){
+        if ((e.message || '').includes('401')){
+          showPin(true);
+          return;
+        }
+        alert(`${e.message} — ตรวจสอบว่า server รันอยู่`);
+      }
+    }
+
+    (async () => {
+      const ok = await checkAdmin();
+      if (!ok) showPin(true);
+      else await refreshAll();
+      observeCharts();
+      document.getElementById('pin-input').addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter') pinLogin();
+      });
+    })();
+  </script>
+</body>
+</html>
